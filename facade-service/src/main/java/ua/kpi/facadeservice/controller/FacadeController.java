@@ -10,7 +10,7 @@ import ua.kpi.sharedmodel.Message;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/facade")
+@RequestMapping("/facade")
 @Slf4j
 public class FacadeController {
 
