@@ -1,15 +1,17 @@
 package ua.kpi.facadeservice.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-import ua.kpi.facadeservice.model.Message;
+import ua.kpi.sharedmodel.Message;
 
 import java.util.UUID;
 
 @RestController
-//@RequestMapping("/api/v1")
+@RequestMapping("/api/facade")
+@Slf4j
 public class FacadeController {
 
     WebClient loggingWebClient = WebClient.create("http://localhost:8081");
@@ -20,35 +22,34 @@ public class FacadeController {
         return "world!";
     }
 
-    @GetMapping("/facade")
+    @GetMapping()
     public String getMessages() {
-        var loggingResponce = loggingWebClient
+        var loggingResponse = loggingWebClient
                 .get()
-                .uri("/log")
+                .uri("/logging")
                 .retrieve()
-                .bodyToMono(String.class);
-        var messageResponce = messagesWebClient
+                .bodyToMono(String.class)
+                .block();
+        var messageResponse = messagesWebClient
                 .get()
                 .uri("/message")
                 .retrieve()
-                .bodyToMono(String.class);
-        return loggingResponce.block() + " : " + messageResponce.block();
+                .bodyToMono(String.class)
+                .block();
+        return loggingResponse + " : " + messageResponse;
     }
 
-    @PostMapping("/facade")
-    public Mono<Void> writeMessage(@RequestBody String body) {
-        UUID id = UUID.randomUUID();
-        var msg = new Message(id, body);
-        System.out.println("id: " + id);
-        System.out.println("body: "+ body);
-        System.out.println("Message " + msg);
-        return loggingWebClient
-                .post()
-                .uri("/log")
+    @PostMapping()
+    public void writeMessage(@RequestBody String body) {
+        var msg = new Message(UUID.randomUUID(), body);
+        log.info("Message {}", msg);
+        loggingWebClient.post()
+                .uri("/logging")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(Mono.just(msg), Message.class)
                 .retrieve()
-                .bodyToMono(Void.class);
+                .bodyToMono(Void.class)
+                .block();
     }
 
 }
