@@ -1,10 +1,12 @@
 package ua.kpi.facadeservice.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import ua.kpi.facadeservice.service.KafkaProducer;
 import ua.kpi.sharedmodel.Message;
 
 import java.util.UUID;
@@ -14,8 +16,11 @@ import java.util.UUID;
 @Slf4j
 public class FacadeController {
 
-    WebClient loggingWebClient = WebClient.create("http://localhost:8081");
-    WebClient messagesWebClient = WebClient.create("http://localhost:8082");
+    private WebClient loggingWebClient = WebClient.create("http://localhost:8081");
+    private WebClient messagesWebClient = WebClient.create("http://localhost:8082");
+
+    @Autowired
+    private KafkaProducer kafkaProducer;
 
     @GetMapping("/hello")
     public String helloWorld() {
@@ -50,6 +55,9 @@ public class FacadeController {
                 .retrieve()
                 .bodyToMono(Void.class)
                 .block();
+
+        kafkaProducer.produce(msg);
+
     }
 
 }
