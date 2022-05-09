@@ -2,28 +2,29 @@ package ua.kpi.loggingservice.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ua.kpi.loggingservice.service.LoggingService;
 import ua.kpi.sharedmodel.Message;
-
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 @RequestMapping("/logging")
 @Slf4j
 public class LoggingController {
 
-    public Map<UUID, String> messages = new ConcurrentHashMap<>();
+    public LoggingService loggingService;
+
+    public LoggingController(LoggingService loggingService) {
+        this.loggingService = loggingService;
+    }
+
 
     @GetMapping()
     public String getMessages() {
-        return messages.values().toString();
+        return loggingService.getMessages();
     }
 
     @PostMapping()
     public void writeMessage(@RequestBody Message msg) {
-        log.info("POST logging service message: {}", msg);
-        messages.put(msg.getId(), msg.getText());
+        loggingService.writeMessage(msg);
     }
 
 
