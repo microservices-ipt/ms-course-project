@@ -10,16 +10,10 @@ import ua.kpi.facadeservice.service.FacadeService;
 @Slf4j
 public class FacadeController {
 
-    public FacadeService facadeService;
+    private final FacadeService facadeService;
 
     public FacadeController(FacadeService facadeService) {
         this.facadeService = facadeService;
-    }
-
-
-    @GetMapping("/hello")
-    public String helloWorld() {
-        return facadeService.helloWorld();
     }
 
     @GetMapping()

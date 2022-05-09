@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ua.kpi.messagesservice.service.MessageService;
 
 @RestController
-@RequestMapping("/message")
+@RequestMapping("/messages")
 public class MessagesController {
 
     @Autowired

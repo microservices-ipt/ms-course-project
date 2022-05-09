@@ -11,4 +11,12 @@ spring:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       bootstrap-servers: localhost:9092
 
-
+external:
+  service:
+    logging:
+      node1: http://localhost:8081
+      node2: http://localhost:8083
+      node3: http://localhost:8084
+    messages:
+      node1: http://localhost:8082
+      node2: http://localhost:8085
