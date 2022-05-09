@@ -1,0 +1,29 @@
+version: "3.8"
+services:
+  zookeeper:
+    platform: linux/x86_64
+    image: confluentinc/cp-zookeeper:latest
+    ports:
+      - 32181:32181
+    environment:
+      - ZOOKEEPER_CLIENT_PORT=32181
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    restart: always
+    hostname: zookeeper
+
+
+  kafka:
+    platform: linux/x86_64
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - 9092:9092
+    restart: always
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:32181
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9093, EXTERNAL://localhost:9092
+      - KAFKA_DEFAULT_REPLICATION_FACTOR=1
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT, EXTERNAL:PLAINTEXT
+      - KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1

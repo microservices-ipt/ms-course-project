@@ -1,2 +1,13 @@
 server:
   port: 8082
+
+spring:
+  kafka:
+    topic: messages
+    consumer:
+      bootstrap-servers: localhost:9092
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: ua.kpi.sharedmodel
+      group-id: messages-group-id1
