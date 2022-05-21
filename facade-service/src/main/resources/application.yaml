@@ -2,8 +2,9 @@ server:
   port: 8080
 
 
-
 spring:
+  application:
+    name: facade-service
   kafka:
     topic: messages
     producer:
@@ -11,12 +12,34 @@ spring:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       bootstrap-servers: localhost:9092
 
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      config:
+        enabled: true
+      discovery:
+        instance-id: ${spring.application.name}-${server.port}
+        serviceName: ${spring.application.name}
+  config:
+    import: "optional:consul:"
+
+
 external:
   service:
     logging:
-      node1: http://localhost:8081
-      node2: http://localhost:8083
-      node3: http://localhost:8084
+      name: logging-service
     messages:
-      node1: http://localhost:8082
-      node2: http://localhost:8085
+      name: messages-service
+
+
+
+management:
+  endpoint:
+    health:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health
+

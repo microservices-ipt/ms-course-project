@@ -2,6 +2,8 @@ server:
   port: 8082
 
 spring:
+  application:
+    name: messages-service
   kafka:
     topic: messages
     consumer:
@@ -11,3 +13,25 @@ spring:
       properties:
         spring.json.trusted.packages: ua.kpi.sharedmodel
       group-id: messages-group-id1
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      config:
+        enabled: true
+      discovery:
+        instance-id: ${spring.application.name}-${server.port}
+        serviceName: ${spring.application.name}
+
+  config:
+    import: "optional:consul:"
+
+
+management:
+  endpoint:
+    health:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health
