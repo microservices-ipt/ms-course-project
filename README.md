@@ -8,7 +8,7 @@ docker compose -f kafka-docker-compose.yaml up
 ```
 
 ##
-To run consul on docker container:
+To run consul:
 
 1. Install consul
 2. type in terminal
