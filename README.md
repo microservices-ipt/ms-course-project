@@ -20,5 +20,5 @@ consul agent -dev
    -- key: config/facade-service/spring.consul.kafka.topic, value: messages <br>
    -- key: config/messages-service/spring.consul.kafka.topic, value: messages <br>
    -- key: config/logging-service/spring.consul.hazelcast.map, value: logging-map
-5. run services specifying post via service_port=<port> environmental variable
+5. run services specifying post via service_port=\<port\> environmental variable
    
