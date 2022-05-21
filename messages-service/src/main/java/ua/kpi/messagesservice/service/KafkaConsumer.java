@@ -13,8 +13,8 @@ public class KafkaConsumer {
     @Autowired
     private MessageService messageService;
 
-    @KafkaListener(topics = "#{'${spring.kafka.topic}'}")
-    public void consume(Message message){
+    @KafkaListener(topics = "#{'${spring.consul.kafka.topic}'}")
+    public void consume(Message message) {
         log.info("Consuming the message: {}", message);
         messageService.saveMessage(message);
     }

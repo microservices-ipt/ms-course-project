@@ -1,9 +1,7 @@
 package ua.kpi.facadeservice.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.common.protocol.types.Field;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,7 +12,6 @@ import ua.kpi.sharedmodel.Message;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 @Slf4j
@@ -26,20 +23,11 @@ public class FacadeService {
     private final List<WebClient> messagesWebClients;
 
     public FacadeService(KafkaProducer kafkaProducer,
-                         @Value("${external.service.logging.node1}") String loggingServiceNode1,
-                         @Value("${external.service.logging.node2}") String loggingServiceNode2,
-                         @Value("${external.service.logging.node3}") String loggingServiceNode3,
-                         @Value("${external.service.messages.node1}") String messagesServiceNode1,
-                         @Value("${external.service.messages.node2}") String messagesServiceNode2
-                         ) {
+                         @Qualifier("loggingServiceWebClients") List<WebClient> loggingWebClients,
+                         @Qualifier("messagesServiceWebClients") List<WebClient> messagesWebClients) {
         this.kafkaProducer = kafkaProducer;
-        loggingWebClients = List.of(
-                WebClient.create(loggingServiceNode1),
-                WebClient.create(loggingServiceNode2),
-                WebClient.create(loggingServiceNode3));
-        messagesWebClients = List.of(
-                WebClient.create(messagesServiceNode1),
-                WebClient.create(messagesServiceNode2));
+        this.loggingWebClients = loggingWebClients;
+        this.messagesWebClients = messagesWebClients;
 
     }
 
@@ -65,7 +53,7 @@ public class FacadeService {
         kafkaProducer.produce(msg);
     }
 
-    private void postMessage(WebClient serviceWebClient, String uri, Message msg){
+    private void postMessage(WebClient serviceWebClient, String uri, Message msg) {
         serviceWebClient
                 .post()
                 .uri(uri)
@@ -76,7 +64,7 @@ public class FacadeService {
                 .block();
     }
 
-    private String getMessages(WebClient serviceWebClient, String uri){
+    private String getMessages(WebClient serviceWebClient, String uri) {
         return serviceWebClient
                 .get()
                 .uri(uri)

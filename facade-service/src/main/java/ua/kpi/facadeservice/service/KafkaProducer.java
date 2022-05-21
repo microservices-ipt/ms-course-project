@@ -3,6 +3,7 @@ package ua.kpi.facadeservice.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
@@ -12,13 +13,14 @@ import ua.kpi.sharedmodel.Message;
 
 @Service
 @Slf4j
+@RefreshScope
 public class KafkaProducer {
 
 
     @Autowired
     private KafkaTemplate<String, Message> kafkaTemplate;
 
-    @Value("${spring.kafka.topic}")
+    @Value("${spring.consul.kafka.topic}")
     private String kafkaMessagesTopic;
 
     public void produce(Message message) {
