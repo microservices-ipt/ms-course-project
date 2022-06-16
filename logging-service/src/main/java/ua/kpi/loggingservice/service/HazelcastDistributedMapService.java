@@ -13,12 +13,12 @@ import java.util.UUID;
 @Service
 //@Primary
 @Slf4j
-public class HazelcastLoggingService implements LoggingService {
+public class HazelcastDistributedMapService implements LoggingService {
 
     public HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-    public Map<UUID, String> messages = hazelcastInstance.getMap("logging_map");
+    public Map<Integer, Integer> messages = hazelcastInstance.getMap("distributed_map");
 
-    public HazelcastLoggingService() {}
+    public HazelcastDistributedMapService() {}
 
     @Override
     public String getMessages() {
@@ -28,6 +28,8 @@ public class HazelcastLoggingService implements LoggingService {
     @Override
     public void writeMessage(Message msg) {
         log.info("POST logging service message: {}", msg);
-        messages.put(msg.getId(), msg.getText());
+        for (int i = 0; i < 1000; i++) {
+            messages.put(Integer.valueOf(i), Integer.valueOf(i));
+        }
     }
 }

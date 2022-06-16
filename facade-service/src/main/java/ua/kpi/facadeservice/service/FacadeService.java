@@ -22,11 +22,11 @@ public class FacadeService {
 
     public FacadeService() {
         loggingWebClients = List.of(
-                WebClient.create("http://localhost:8081"),
+                WebClient.create("http://localhost:8082"),
                 WebClient.create("http://localhost:8083"),
                 WebClient.create("http://localhost:8084")
         );
-        messagesWebClient = WebClient.create("http://localhost:8082");
+        messagesWebClient = WebClient.create("http://localhost:8085");
     }
 
     public String helloWorld() {
