@@ -17,39 +17,41 @@ public class HazelcastDistributedMapWithOptimisticLockService implements Logging
     public HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
     public Map<Integer, Integer> messages = hazelcastInstance.getMap("optimisticLock_map");
 
-    public Integer key = Integer.valueOf(1);
+    public Integer key = 1;
 
-    public HazelcastDistributedMapWithOptimisticLockService() {}
+    public HazelcastDistributedMapWithOptimisticLockService() {
+        messages.putIfAbsent(key, 0);
+    }
 
     @Override
     public String getMessages() {
-        try {
-            Integer result = messages.get(key);
-            return result.toString();
-        } catch (Exception e) {
-            log.info(e.toString());
-            return "0";
-        }
+        Integer result = messages.get(key);
+        return result.toString();
+
     }
 
     @Override
     public void writeMessage(Message msg) {
         log.info("POST logging service message: {}", msg);
+        for (int k = 0; k < 1000; k++) {
+            writeIteration();
+        }
+    }
+
+    private void writeIteration() {
         try {
-            for ( int k = 0; k < 1000; k++ ) {
-                for (; ; ) {
-                    Integer oldValue = messages.get( key );
-                    Integer newValue = oldValue;
-                    Thread.sleep( 10 );
-                    newValue = newValue + 1;
-                    if ( messages.replace( key, oldValue, newValue ) )
-                        break;
-                }
+            for (; ; ) {
+                Integer oldValue = messages.get(key);
+                Integer newValue = oldValue;
+                Thread.sleep(10);
+                newValue = newValue + 1;
+                if (messages.replace(key, oldValue, newValue))
+                    break;
             }
         } catch (Exception e) {
-            messages.put( key, 0);
             log.info(e.toString());
-            writeMessage(msg);
+            writeIteration();
         }
+
     }
 }
